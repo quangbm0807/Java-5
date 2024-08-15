@@ -1,0 +1,22 @@
+package com.quangbui.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+@Controller
+public class MyController {
+	@Autowired
+	ServletContext application;
+	@Autowired
+	HttpSession session;
+	@Autowired
+	HttpServletRequest request;
+	@Autowired
+	HttpServletResponse response;
+	@RequestMapping("/lombok")
+}

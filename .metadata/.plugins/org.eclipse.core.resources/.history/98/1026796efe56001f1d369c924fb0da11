@@ -1,0 +1,17 @@
+package com.quangbui.controller;
+
+import com.quangbui.model.ChatMessage;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.stereotype.Controller;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+
+@Controller
+public class ChatController {
+
+    @PostMapping("/chat.sendMessage")
+    public String sendMessage(@RequestParam("message") String message) {
+        // Xử lý tin nhắn ở đây
+        return "redirect:/chat";
+    }
+}

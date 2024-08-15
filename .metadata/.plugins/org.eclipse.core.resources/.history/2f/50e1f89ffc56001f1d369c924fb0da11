@@ -1,0 +1,5 @@
+package com.quangbui.config;
+
+public class WebSocketConfig {
+
+}

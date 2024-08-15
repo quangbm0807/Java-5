@@ -1,0 +1,5 @@
+INDEX VERSION 1.4+D:\HocTap\JAVA5\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+246547437.index
+3789477430.index
+2768476762.index
+2876518766.index
