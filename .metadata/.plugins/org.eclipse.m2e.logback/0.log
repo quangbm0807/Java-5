@@ -4263,3 +4263,5 @@ Caused by: org.eclipse.core.runtime.CoreException: Cannot determine URI for '/Da
 2024-08-25 12:03:02,528 [Worker-38: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
 2024-08-25 12:03:02,533 [Worker-38: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\HocTap\JAVA5\Lab5\src\test\resources
 2024-08-25 12:03:03,892 [Worker-32: Updating Maven Dependencies] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: com.poly:Dangthpc04349_Lab05:0.0.1-SNAPSHOT @ D:\HocTap\JAVA5\Lab5\pom.xml.
+2024-08-26 13:32:34,829 [Worker-7: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is out-of-date. Trying to update.
+2024-08-27 09:01:40,141 [Worker-1: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
