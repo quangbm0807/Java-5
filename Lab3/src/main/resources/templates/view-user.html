@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>JSP Page</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+	<div class="container">
+		<h2>DANH SACH NGUOI DUNG</h2>
+		<p>
+			<a class="btn btn-primary" href="/">ADD USER</a>
+		</p>
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>UserName</th>
+					<th>Password</th>
+					<th>FullName</th>
+					<th>Age</th>
+					<th>Gender</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="user : ${USERS}">
+					<td th:text="${user.username}">admin</td>
+					<td th:text="${user.password}">55555</td>
+					<td th:text="${user.fullName}">Admin Da Nang</td>
+					<td th:text="${user.age}">33</td>
+					<td ><span th:text="${user.gender} ? 'Nam' : 'Nữ'"></span></td>
+					<td><a class="btn btn-primary btn-sm" th:href="@{'/edit/'+${user.username}}">Edit</a>
+						| <a class="btn btn-danger btn-sm" th:href="@{'/delete/'+${user.username}}">Del</a></td>
+				</tr>
+
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>
