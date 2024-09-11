@@ -1,0 +1,52 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Student List</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- MDB CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row" style="margin-top: 50px">
+            <div class="col-md-12">
+                <h2 class="mb-4">Student List</h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Mark</th>
+                            <th>Major</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="student : ${list_student}">
+                            <td th:text="${student.id}">ID</td>
+                            <td th:text="${student.name}">Name</td>
+                            <td th:text="${student.mark}">Mark</td>
+                            <td th:text="${student.major.name}">Major</td> <!-- Hiển thị tên major -->
+                            <td>
+                               <a th:href="@{/student/edit/{id}(id=${student.id})}" class="btn btn-warning btn-sm">Edit</a>
+                                <form th:action="@{/student/delete/{id}(id=${student.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <a th:href="@{/student/}" class="btn btn-primary btn-sm">Add</a>
+            </div>
+        </div>
+    </div>
+    <!-- Optional JavaScript -->
+    <!-- MDB JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.5.1/mdb.min.js"></script>
+</body>
+
+</html>
