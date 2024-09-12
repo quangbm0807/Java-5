@@ -28,6 +28,7 @@ public class HelloWorldController {
 		String passsWord = req.getParameter("password");
 		req.setAttribute("username", userName);
 		req.setAttribute("password", passsWord);
+		
 		return "loginSuccess";
 	}
 }
