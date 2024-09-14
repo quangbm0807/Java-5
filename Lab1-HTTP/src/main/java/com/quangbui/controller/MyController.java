@@ -29,14 +29,6 @@ public class MyController {
 
 	@Autowired
 	private ProvinceService provinceService;
-	@Autowired
-	ServletContext application;
-	@Autowired
-	HttpSession session;
-	@Autowired
-	HttpServletRequest request;
-	@Autowired
-	HttpServletResponse response;
 
 	@GetMapping("/")
 	public String index(Model model) {
