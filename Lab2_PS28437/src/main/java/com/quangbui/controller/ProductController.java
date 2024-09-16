@@ -39,7 +39,8 @@ public class ProductController {
 	private ServletContext servletContext;
 
 	@GetMapping("/form")
-	public String form(@RequestParam(value = "id", required = false) Integer id, Model model) {
+	public String form(@RequestParam(value = "id", required = false) Integer id,
+					   Model model) {
 		Product product = id != null ? productService.getProductById(id) : new Product();
 		if (product == null) {
 			product = new Product();
@@ -50,9 +51,11 @@ public class ProductController {
 	}
 
 	@PostMapping("/save")
-	public String save(@RequestParam(value = "id", required = false) Integer id, @RequestParam("name") String name,
-			@RequestParam("price") String price, @RequestParam("imgFile") MultipartFile imgFile,
-			RedirectAttributes redirectAttributes) {
+	public String save(@RequestParam(value = "id", required = false) Integer id,
+			 			@RequestParam("name") String name,
+						@RequestParam("price") String price,
+			 			@RequestParam("imgFile") MultipartFile imgFile,
+						RedirectAttributes redirectAttributes) {
 		try {
 			Product product = new Product();
 			if (id != null) {
@@ -60,8 +63,7 @@ public class ProductController {
 			}
 			product.setName(name);
 			product.setPrice(Double.parseDouble(price));
-
-			if (!imgFile.isEmpty()) {
+			if (!imgFile.isEmpty() && imgFile.getOriginalFilename() != null) {
 				String projectDir = System.getProperty("user.dir");
 				String uploadPath = projectDir + "/src/main/resources/static/img/";
 				File uploadDir = new File(uploadPath);
@@ -94,9 +96,9 @@ public class ProductController {
 	}
 
 	@GetMapping("/delete")
-	public String delete(@RequestParam("id") Integer id, RedirectAttributes redirectAttributes) {
+	public String delete(@RequestParam("id") Integer id, RedirectAttributes redirectAttributes, Model model) {
 		productService.deleteProduct(id);
-		redirectAttributes.addFlashAttribute("message", "Product deleted successfully.");
-		return "redirect:/product/form";
+		model.addAttribute("message", "Product deleted successfully.");
+		return "forward:/product/form";
 	}
 }
