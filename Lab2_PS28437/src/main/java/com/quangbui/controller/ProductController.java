@@ -35,8 +35,8 @@ public class ProductController {
 		this.productService = productService;
 	}
 
-	@Autowired
-	private ServletContext servletContext;
+//	@Autowired
+//	private ServletContext servletContext;
 
 	@GetMapping("/form")
 	public String form(@RequestParam(value = "id", required = false) Integer id,
@@ -77,6 +77,8 @@ public class ProductController {
 				Path filePath = Paths.get(uploadPath, fileName);
 				Files.copy(imgFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 				product.setImg(fileName);
+			}else {
+				product.setImg(productService.getProductById(id).getImg());
 			}
 			if (id == null) {
 				productService.saveProduct(product);
