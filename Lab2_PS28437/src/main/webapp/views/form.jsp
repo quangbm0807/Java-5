@@ -4,6 +4,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.3.0/mdb.min.css" rel="stylesheet" />
 
 <div class="container mt-5">
+		<jsp:include page="menu.jsp" flush="true"></jsp:include>
     <h1 class="text-center mb-4">Param Form</h1>
     <form id="paramForm" action="save" method="get">
         <div class="form-outline mb-4">
