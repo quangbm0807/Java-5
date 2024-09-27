@@ -5,6 +5,7 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.3.0/mdb.min.css"
 	rel="stylesheet" />
 <div class="container mt-5">
+		<jsp:include page="../menu.jsp" flush="true"></jsp:include>
 	<h1 class="text-center mb-4">Product Form</h1>
 
 	<c:if test="${not empty error}">
