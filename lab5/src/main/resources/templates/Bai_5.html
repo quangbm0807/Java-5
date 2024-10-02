@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 5</title>
+    <!-- MDBootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.3.1/mdb.min.css" rel="stylesheet">
+    <script>
+        function submitForm() {
+            document.getElementById("sortForm").submit();
+        }
+    </script>
+</head>
+<body>
+    <div class="container w-25 mt-3">
+        <!-- Search Form -->
+        <form id="searchForm" method="get" action="/page/search">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm..." aria-label="Tìm kiếm" aria-describedby="button-addon2">
+                <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Tìm</button>
+            </div>
+        </form>
+
+        <!-- Sort Form -->
+        <form id="sortForm" method="get" action="/page/sort">
+            <select class="form-select" name="sortField" aria-label="Default select example" onchange="submitForm()">
+                <option value="id" th:selected="${sortField == 'id'}">Theo ID</option>
+                <option value="name" th:selected="${sortField == 'name'}">Theo tên</option>
+                <option value="price" th:selected="${sortField == 'price'}">Theo giá</option>
+                <option value="creationdate" th:selected="${sortField == 'date'}">Theo ngày</option>
+            </select>
+        </form>
+    </div>
+
+    <!-- Product Table -->
+    <div class="container mt-3">
+        <table class="table table-hover table-bordered text-center align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Tên</th>
+                    <th scope="col">Giá</th>
+                    <th scope="col">Ngày</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item, index : ${page.content}">
+                    <th scope="row" th:text="${index.count}"></th>
+                    <td th:text="${item.getName()}"></td>
+                    <td th:text="${item.getPrice()}"></td>
+                    <td th:text="${#dates.format(item.getCreationdate(), 'dd-MM-yyyy')}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Pagination and Page Info -->
+        <nav aria-label="Page navigation example" class="d-flex justify-content-center mb-3">
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" th:href="@{/page/sort(p=0, sortField=${sortField}, sortDir=${sortDir})}">Đầu tiên</a></li>
+                <li class="page-item" th:if="${page.number > 0}"><a class="page-link" th:href="@{/page/sort(p=${page.number - 1}, sortField=${sortField}, sortDir=${sortDir})}">&laquo;</a></li>
+                <li class="page-item" th:if="${page.number > 1}"><span class="page-link">...</span></li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"><a class="page-link" th:href="@{/page/sort(p=${i}, sortField=${sortField}, sortDir=${sortDir})}" th:text="${i + 1}"></a></li>
+                <li class="page-item" th:if="${page.number < page.totalPages - 3}"><span class="page-link">...</span></li>
+                <li class="page-item" th:if="${page.number < page.totalPages - 1}"><a class="page-link" th:href="@{/page/sort(p=${page.number + 1}, sortField=${sortField}, sortDir=${sortDir})}">&raquo;</a></li>
+                <li class="page-item"><a class="page-link" th:href="@{/page/sort(p=${page.totalPages - 1}, sortField=${sortField}, sortDir=${sortDir})}">Cuối cùng</a></li>
+            </ul>
+        </nav>
+
+        <!-- Page Info Table -->
+        <table class="table table-hover table-bordered text-center align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Số thực thể</th>
+                    <th scope="col">Trang số</th>
+                    <th scope="col">Kích thước trang</th>
+                    <th scope="col">Tổng số thực thể</th>
+                    <th scope="col">Tổng số trang</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td th:text="${page.numberOfElements}"></td>
+                    <td th:text="${page.number+1}"></td>
+                    <td th:text="${page.size}"></td>
+                    <td th:text="${page.totalElements}"></td>
+                    <td th:text="${page.totalPages}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- MDBootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.3.1/mdb.min.js"></script>
+</body>
+</html>
