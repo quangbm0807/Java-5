@@ -1,43 +1,45 @@
 package com.java5.slide6.dao;
 
-
+import java.util.Date;
 import java.util.List;
-import org.hibernate.annotations.NamedQuery;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.java5.slide6.entity.Account;
+import com.java5.slide6.entity.Order;
+import com.java5.slide6.entity.OrderDetail;
 import com.java5.slide6.entity.Product;
 import com.java5.slide6.entity.Report;
 
-public interface ProductDAO extends JpaRepository<Product, Integer>{
-	
-	@Query(name="findProductBetweenPrice")
+public interface ProductDAO extends JpaRepository<Product, Integer> {
+
+	@Query(name = "findProductBetweenPrice")
 	List<Product> findProductBetweenPrice(double minPrice, double maxPrice);
-	
-	@Query("SELECT product FROM Product product where product.price > ?1")
-	List<Product> getProductGreaterThanPrice(double price);
-	
-	@Query(value="select p.* from products p where p.categoryid =:categoryName", nativeQuery=true)
-	List<Product> getProductByCategoryID(@Param("categoryName") String categoryID);
-	
-	@Query("SELECT o FROM Product o WHERE o.price BETWEEN ?1 AND ?2")
-	List<Product> findByPrice(double minPrice, double maxPrice);
 
-//	@Query("SELECT o FROM Product o WHERE o.price BETWEEN ?1 AND ?2")
-//	List<Product> findByPrice(double minPrice, double maxPrice);
-	List<Product> findByPriceBetween(double minPrice, double maxPrice);
+	List<Product> findAllByNameContaining(String keywords);
 
-//@Query("SELECT o FROM Product o WHERE o.name LIKE ?1")
-//Page<Product> findByKeywords(String keywords, Pageable pageable);
-
-	Page<Product> findAllByNameLike(String keywords, Pageable pageable);
-
-	@Query("SELECT new Report(o.category, sum(o.price), count(o)) "
-			+ " FROM Product o "
-			+ " GROUP BY o.category"
-			+ " ORDER BY sum(o.price) DESC")
+	@Query("SELECT new com.java5.slide6.entity.Report(p.category, SUM(p.price), COUNT(p)) " + "FROM Product p "
+			+ "GROUP BY p.category " + "ORDER BY SUM(p.price) DESC")
 	List<Report> getInventoryByCategory();
+
+	@Query("SELECT od FROM OrderDetail od WHERE od.order.id IN "
+			+ "(SELECT od2.order.id FROM OrderDetail od2 GROUP BY od2.order.id "
+			+ "ORDER BY SUM(od2.price * od2.quantity) DESC)")
+	List<OrderDetail> findOrderDetailsForHighestValueOrder();
+
+	@Query("SELECT o FROM Order o WHERE o.id IN (SELECT od.order.id FROM OrderDetail od " + "GROUP BY od.order.id "
+			+ "ORDER BY SUM(od.price * od.quantity) ASC)")
+	List<Order> findLowestValueOrder();
+
+	@Query("SELECT a FROM Account a WHERE a.username IN "
+			+ "(SELECT o.account.username FROM Order o JOIN o.orderDetails od " + "GROUP BY o.account.username "
+			+ "ORDER BY SUM(od.price * od.quantity) DESC)")
+	List<Account> findTopCustomer();
+
+	@Query("SELECT p FROM Product p JOIN p.orderDetails od JOIN od.order o WHERE o.createDate BETWEEN :beginDate AND :endDate "
+			+ "GROUP BY p " + "ORDER BY SUM(od.quantity) DESC")
+	List<Product> findTopSellingProducts(@Param("beginDate") Date beginDate, @Param("endDate") Date endDate);
 }
