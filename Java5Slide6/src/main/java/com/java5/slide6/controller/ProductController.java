@@ -15,28 +15,6 @@ import com.java5.slide6.entity.Product;
 import com.java5.slide6.entity.Report;
 @Controller
 public class ProductController {
-	@Autowired
-	ProductDAO dao;
-	@RequestMapping("/product/search")
-	public String search(Model model, 
-			@RequestParam("min") Optional<Double> min,
-			@RequestParam("max") Optional<Double> max) {
 
-		List<Product> items = dao.findAll();
-		if(min.isPresent() && max.isPresent())
-			items = dao.findByPriceBetween(min.get(), max.get());
-		model.addAttribute("items", items);
-		return "product/search";
-	}
-	@ResponseBody
-	@RequestMapping("/product/report")
-	public List<Report> productReport(){
-		return dao.getInventoryByCategory();
-	}
-	@ResponseBody
-	@RequestMapping("/product/reportByPrice")
-	public List<Product> getProductByPrice(@RequestParam("price") double price){
-		return dao.getProductGreaterThanPrice(price);
-	}
 
 }
