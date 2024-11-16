@@ -1,14 +1,13 @@
 package com.quangbui.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.quangbui.model.Product;
@@ -24,18 +23,86 @@ public class ProductController {
     
     @Autowired
     private ShoppingCartImpl shoppingCartService;
+
     @Autowired
     private GoogleDriveService googleDriveService;
 
     @GetMapping("/management")
-    public String listProducts(Model model) {
-        model.addAttribute("products", productService.findAll());
+    public String listProducts(Model model,
+                               @RequestParam(defaultValue = "0") int page,
+                               @RequestParam(defaultValue = "3") int size,
+                               @RequestParam(defaultValue = "id") String sort,
+                               @RequestParam(defaultValue = "asc") String dir,
+                               @RequestParam(required = false) String keyword) {
+        
+        Sort.Direction direction = Sort.Direction.fromString(dir);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sort));
+        
+        Page<Product> productPage;
+        if (keyword != null && !keyword.isEmpty()) {
+            productPage = productService.findByNameContaining(keyword, pageable);
+        } else {
+            productPage = productService.findAll(pageable);
+        }
+
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("totalItems", productPage.getTotalElements());
+        model.addAttribute("sort", sort);
+        model.addAttribute("dir", dir);
+        model.addAttribute("keyword", keyword);
+
         return "products/list";
     }
+
     @GetMapping("/list")
-    public String products(Model model) {
-    	model.addAttribute("cartSize", shoppingCartService.getCartSize());
-        model.addAttribute("products", productService.findAll());
+    public String products(Model model,
+                           @RequestParam(defaultValue = "0") int page,
+                           @RequestParam(defaultValue = "4") int size,
+                           @RequestParam(defaultValue = "id") String sort,
+                           @RequestParam(defaultValue = "asc") String dir,
+                           @RequestParam(required = false) String keyword,
+                           @RequestParam(required = false) Double minPrice,
+                           @RequestParam(required = false) Double maxPrice) {
+        
+        Sort.Direction direction = Sort.Direction.fromString(dir);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sort));
+        
+        Page<Product> productPage;
+        if (keyword != null && !keyword.isEmpty()) {
+            if (minPrice != null && maxPrice != null) {
+                productPage = productService.findByNameContainingAndPriceBetween(keyword, minPrice, maxPrice, pageable);
+            } else if (minPrice != null) {
+                productPage = productService.findByNameContainingAndPriceGreaterThanEqual(keyword, minPrice, pageable);
+            } else if (maxPrice != null) {
+                productPage = productService.findByNameContainingAndPriceLessThanEqual(keyword, maxPrice, pageable);
+            } else {
+                productPage = productService.findByNameContaining(keyword, pageable);
+            }
+        } else {
+            if (minPrice != null && maxPrice != null) {
+                productPage = productService.findByPriceBetween(minPrice, maxPrice, pageable);
+            } else if (minPrice != null) {
+                productPage = productService.findByPriceGreaterThanEqual(minPrice, pageable);
+            } else if (maxPrice != null) {
+                productPage = productService.findByPriceLessThanEqual(maxPrice, pageable);
+            } else {
+                productPage = productService.findAll(pageable);
+            }
+        }
+
+        model.addAttribute("cartSize", shoppingCartService.getCartSize());
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("totalItems", productPage.getTotalElements());
+        model.addAttribute("sort", sort);
+        model.addAttribute("dir", dir);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
+
         return "products/category";
     }
 
@@ -46,6 +113,8 @@ public class ProductController {
             product.setImageUrl(imageUrl);
             productService.save(product);
         } catch (Exception e) {
+            // Log the exception
+            e.printStackTrace();
         }
         return "redirect:/products/management";
     }
@@ -54,27 +123,29 @@ public class ProductController {
     public String updateProduct(@PathVariable Integer id, @ModelAttribute Product product, @RequestParam(value = "image", required = false) MultipartFile file) {
         try {
             Product existingProduct = productService.findById(id);
-            googleDriveService.deleteFile(existingProduct.getImageUrl());
-            existingProduct.setName(product.getName());
-            existingProduct.setPrice(product.getPrice());
-            
-            if (file != null && !file.isEmpty()) {
-                String imageUrl = googleDriveService.uploadFile(file);
-                existingProduct.setImageUrl(imageUrl);
+            if (existingProduct != null) {
+                if (file != null && !file.isEmpty()) {
+                    googleDriveService.deleteFile(existingProduct.getImageUrl());
+                    String imageUrl = googleDriveService.uploadFile(file);
+                    existingProduct.setImageUrl(imageUrl);
+                }
+                existingProduct.setName(product.getName());
+                existingProduct.setPrice(product.getPrice());
+                productService.save(existingProduct);
             }
-            productService.save(existingProduct);
         } catch (Exception e) {
+            // Log the exception
+            e.printStackTrace();
         }
         return "redirect:/products/management";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable Integer id) {
-    	Product p = new Product();
-    	p = productService.findById(id);
-    	if(p.getImageUrl() != null) {
-    		googleDriveService.deleteFile(p.getImageUrl());
-    	}
+        Product product = productService.findById(id);
+        if (product != null && product.getImageUrl() != null) {
+            googleDriveService.deleteFile(product.getImageUrl());
+        }
         productService.deleteById(id);
         return "redirect:/products/management";
     }

@@ -37,20 +37,30 @@
         </div>
     </nav>
 	<div class="container mt-5">
-		<h2 class="mb-4">Product List</h2>
-		<button type="button" class="btn btn-primary mb-3"
-			data-mdb-toggle="modal" data-mdb-target="#addProductModal">
-			Add New Product</button>
+		<h2 class="mb-4">Phone List</h2>
+		  <div class="row mb-3">
+            <div class="col-md-6">
+                <button type="button" class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#addProductModal">
+                    Add New Phone
+                </button>
+            </div>
+            <div class="col-md-6">
+                <form action="/products/management" method="get" class="d-flex">
+                    <input type="text" name="keyword" class="form-control me-2" placeholder="Search by name" value="${keyword}">
+                    <button type="submit" class="btn btn-outline-primary">Search</button>
+                </form>
+            </div>
+        </div>
 		<div class="table-responsive">
 			<table class="table table-striped">
 				<thead>
-					<tr>
-						<th>ID</th>
-						<th>Name</th>
-						<th>Price</th>
-						<th>Image</th>
-						<th>Actions</th>
-					</tr>
+					 <tr>
+                        <th><a href="/products/management?sort=id&dir=${dir == 'asc' ? 'desc' : 'asc'}&keyword=${keyword}">ID</a></th>
+                        <th><a href="/products/management?sort=name&dir=${dir == 'asc' ? 'desc' : 'asc'}&keyword=${keyword}">Name</a></th>
+                        <th><a href="/products/management?sort=price&dir=${dir == 'asc' ? 'desc' : 'asc'}&keyword=${keyword}">Price</a></th>
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
 				</thead>
 				<tbody>
 					<c:forEach items="${products}" var="product">
@@ -72,6 +82,15 @@
 				</tbody>
 			</table>
 		</div>
+		<nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <c:forEach begin="0" end="${totalPages - 1}" var="i">
+                    <li class="page-item ${currentPage == i ? 'active' : ''}">
+                        <a class="page-link" href="/products/management?page=${i}&size=3&sort=${sort}&dir=${dir}&keyword=${keyword}">${i + 1}</a>
+                    </li>
+                </c:forEach>
+            </ul>
+        </nav>
 	</div>
 
 	<!-- Add Product Modal -->

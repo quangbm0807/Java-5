@@ -1,0 +1,4 @@
+package org.example.ps27852_lab7.helper;
+
+public class MailerHelper {
+}
